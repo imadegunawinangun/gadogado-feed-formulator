@@ -1,117 +1,119 @@
-# Project Requirements Document: codeguide-starter
+# Project Requirements Document (PRD) for gadogado-feed-formulator
 
 ---
 
 ## 1. Project Overview
 
-The **codeguide-starter** project is a boilerplate web application that provides a ready-made foundation for any web project requiring secure user authentication and a post-login dashboard. It sets up the common building blocks—sign-up and sign-in pages, API routes to handle registration and login, and a simple dashboard interface driven by static data. By delivering this skeleton, it accelerates development time and ensures best practices are in place from day one.
+**Paragraph 1:**
+`gadogado-feed-formulator` is a full-stack starter template built with Next.js 15 and TypeScript. It provides a pre-wired foundation for “Bangun Gadogado,” a modern, data-driven animal feed formulation platform aimed at farmers, nutritionists, and feed producers. By combining user authentication, a protected dashboard, a responsive UI/UX, and a type-safe PostgreSQL integration, this codebase jump-starts the creation of an efficient, elegant, and secure solution for complex feed formulation tasks.
 
-This starter kit is being built to solve the friction developers face when setting up repeated common tasks: credential handling, session management, page routing, and theming. Key objectives include: 1) delivering a fully working authentication flow (registration & login), 2) providing a gated dashboard area upon successful login, 3) establishing a clear, maintainable project structure using Next.js and TypeScript, and 4) demonstrating a clean theming approach with global and section-specific CSS. Success is measured by having an end-to-end login journey in under 200 lines of code and zero runtime type errors.
+**Paragraph 2:**
+This project exists to eliminate the boilerplate effort of setting up authentication, database connections, UI theming, and deployment pipelines. The key objectives are: 1) Secure and scalable user management, 2) A modular dashboard ready for feed-formulation features, 3) Consistent, modern styling with light/dark modes, and 4) A developer-friendly environment using Docker and Vercel. Success is measured by how quickly a development team can extend this template into a working feed formulation engine with real data, meeting performance and security standards.
 
 ---
-
 ## 2. In-Scope vs. Out-of-Scope
 
-### In-Scope (Version 1)
-- User registration (sign-up) form with validation
-- User login (sign-in) form with validation
-- Next.js API routes under `/api/auth/route.ts` handling:
-  - Credential validation
-  - Password hashing (e.g., bcrypt)
-  - Session creation or JWT issuance
-- Protected dashboard pages under `/dashboard`:
-  - `layout.tsx` wrapping dashboard content
-  - `page.tsx` rendering static data from `data.json`
-- Global application layout in `/app/layout.tsx`
-- Basic styling via `globals.css` and `dashboard/theme.css`
-- TypeScript strict mode enabled
+**In-Scope (Version 1.0)**
+- User sign-up, sign-in, and session management via Better Auth (configurable to Supabase).
+- Protected `/dashboard` route accessible only to authenticated users.
+- Base UI using Tailwind CSS, Shadcn UI components, Lucide React icons, and dark mode support via `next-themes`.
+- PostgreSQL setup with Drizzle ORM for type-safe queries, ready to connect to Supabase.
+- Docker configuration for local development consistency.
+- Vercel–compatible deployment configuration (serverless functions, caching).
+- Folder structure enforcing separation of concerns: `app/`, `components/`, `lib/`, `db/`.
 
-### Out-of-Scope (Later Phases)
-- Integration with a real database (PostgreSQL, MongoDB, etc.)
-- Advanced authentication flows (password reset, email verification, MFA)
-- Role-based access control (RBAC)
-- Multi-tenant or white-label theming
-- Unit, integration, or end-to-end testing suites
-- CI/CD pipeline and production deployment scripts
+**Out-of-Scope (Planned for Later Phases)**
+- Detailed Drizzle schemas for `ingredients`, `nutrients`, `animals`, `formulations`, and `user_profiles` beyond placeholders.
+- The actual linear programming optimization engine (e.g., `glpk.js` integration).
+- Role-based access controls beyond basic authenticated vs. unauthenticated.
+- Automated testing suite (unit, integration, end-to-end).
+- Export features (PDF/CSV) for formulation results.
+- Continuous integration pipelines (GitHub Actions) beyond Docker/Vercel defaults.
+- Interactive documentation and user onboarding guides.
 
 ---
-
 ## 3. User Flow
 
-A new visitor lands on the root URL and sees a welcome page with options to **Sign Up** or **Sign In**. If they choose Sign Up, they fill in their email, password, and hit “Create Account.” The form submits to `/api/auth/route.ts`, which hashes the password, creates a new user session or token, and redirects them to the dashboard. If any input is invalid, an inline error message explains the issue (e.g., “Password too short”).
+**Paragraph 1:**
+A new user arrives at the landing page and clicks “Sign Up.” They provide an email and password (or use a third-party provider if configured), then confirm their account via email. Once authenticated, the user is redirected to `/dashboard`. A left-hand navigation bar appears listing “Ingredients,” “Animal Profiles,” “Formulations,” and “Settings.” The main panel welcomes them with a quick overview and prompts to add their first ingredient or create an animal profile.
 
-Once authenticated, the user is taken to the `/dashboard` route. Here they see a sidebar or header defined by `dashboard/layout.tsx`, and the main panel pulls in static data from `data.json`. They can log out (if that control is present), but otherwise their entire session is managed by server-side cookies or tokens. Returning users go directly to Sign In, submit credentials, and upon success they land back on `/dashboard`. Any unauthorized access to `/dashboard` redirects back to Sign In.
+**Paragraph 2:**
+From the dashboard, the user clicks “Ingredients” to view a table of existing items (initially empty) and an “Add Ingredient” button. They fill out a form (name, cost, nutrient values) and save. Next, they go to “Formulations,” select an animal profile, pick ingredients, and click “Generate.” The optimization logic (in a later phase) runs behind the scenes and returns a cost- and nutrient-balanced feed mix. Results appear as a chart and table. The user can then save, export, or adjust inputs and re-run the calculation.
 
 ---
-
 ## 4. Core Features
 
-- **Sign-Up Page (`/app/sign-up/page.tsx`)**: Form fields for email & password, client-side validation, POST to `/api/auth`.
-- **Sign-In Page (`/app/sign-in/page.tsx`)**: Form fields for email & password, client-side validation, POST to `/api/auth`.
-- **Authentication API (`/app/api/auth/route.ts`)**: Handles both registration and login based on HTTP method, integrates password hashing (bcrypt) and session or JWT logic.
-- **Global Layout (`/app/layout.tsx` + `globals.css`)**: Shared header, footer, and CSS resets across all pages.
-- **Dashboard Layout (`/app/dashboard/layout.tsx` + `dashboard/theme.css`)**: Sidebar or top nav for authenticated flows, section-specific styling.
-- **Dashboard Page (`/app/dashboard/page.tsx`)**: Reads `data.json`, renders it as cards or tables.
-- **Static Data Source (`/app/dashboard/data.json`)**: Example dataset to demo dynamic rendering.
-- **TypeScript Configuration**: `tsconfig.json` with strict mode and path aliases (if any).
+- **Authentication & Profile Management**: Sign-up/sign-in flows, password reset, session storage (Better Auth + Supabase).  
+- **Protected Dashboard**: Gatekeeper route for all core modules; redirect unauthenticated users to sign-in.  
+- **Ingredient Management**: CRUD UI for feed ingredients with fields for cost and nutrient composition.  
+- **Animal Profile Setup**: CRUD UI for defining animal types, production stages, and dietary requirements.  
+- **Formulation Engine Stub**: UI for selecting ingredients and animal profiles; placeholder for optimization results.  
+- **Real-Time Analysis (UI)**: Charts and tables to display cost breakdowns and nutrient profiles (data stubs initially).  
+- **Theming & Styles**: Light/dark mode toggle, global CSS variables, Tailwind CSS + Shadcn UI components.  
+- **Database Layer**: Drizzle ORM setup with initial auth schema; ready for extension.  
+- **Development Environment**: Dockerfile, `docker-compose.yml`, and environment variable template.  
+- **Deployment Configuration**: Vercel settings for serverless functions, environment variables, and caching.
 
 ---
-
 ## 5. Tech Stack & Tools
 
-- **Framework**: Next.js (App Router) for file-based routing, SSR/SSG, and API routes.
-- **Language**: TypeScript for type safety.
-- **UI Library**: React 18 for component-based UI.
-- **Styling**: Plain CSS via `globals.css` (global reset) and `theme.css` (sectional styling). Can easily migrate to CSS Modules or Tailwind in the future.
-- **Backend**: Node.js runtime provided by Next.js API routes.
-- **Password Hashing**: bcrypt (npm package).
-- **Session/JWT**: NextAuth.js or custom JWT logic (to be decided in implementation).
-- **IDE & Dev Tools**: VS Code with ESLint, Prettier extensions. Optionally, Cursor.ai for AI-assisted coding.
+- **Frontend Framework**: Next.js 15 (App Router) with React Server & Client Components.  
+- **Language**: TypeScript (end-to-end type safety).  
+- **Authentication**: Better Auth library, pluggable to Supabase Auth.  
+- **Database**: PostgreSQL (hosted on Supabase) with Drizzle ORM for type-safe queries.  
+- **Styling & UI**: Tailwind CSS v4, Shadcn UI components (New York style), Lucide React icons, `next-themes` for theming.  
+- **Containerization**: Docker & Docker Compose for local environment parity.  
+- **Deployment**: Vercel (serverless functions + automatic caching).  
+- **ORM Migrations**: Drizzle Kit (future use for versioned migrations).  
+- **Optimization Engine (Planned)**: `glpk.js` or similar linear programming library in `/lib/optimizers`.  
+- **IDE/Plugins**: VS Code with ESLint, Prettier, TypeScript support. Cursor/Windsurf optional for AI-assisted coding.
 
 ---
-
 ## 6. Non-Functional Requirements
 
-- **Performance**: Initial page load under 200 ms on a standard broadband connection. API responses under 300 ms.
-- **Security**:
-  - HTTPS only in production.
-  - Proper CORS, CSRF protection for API routes.
-  - Secure password storage (bcrypt with salt).
-  - No credentials or secrets checked into version control.
-- **Scalability**: Structure must support adding database integration, caching layers, and advanced auth flows without rewiring core app.
-- **Usability**: Forms should give real-time feedback on invalid input. Layout must be responsive (mobile > 320 px).
-- **Maintainability**: Code must adhere to TypeScript strict mode. Linting & formatting enforced by ESLint/Prettier.
+- **Performance**:  
+  • Page load time < 3 seconds on 3G network.  
+  • API responses for dashboard data < 200 ms.  
+- **Security**:  
+  • All traffic over HTTPS.  
+  • Passwords hashed securely (via Better Auth).  
+  • Prepare for Supabase Row-Level Security (RLS) policies.  
+- **Usability**:  
+  • Responsive design (mobile, tablet, desktop).  
+  • WCAG 2.1 AA compliance for core flows.  
+  • Intuitive light/dark mode toggle.  
+- **Scalability**:  
+  • Serverless architecture on Vercel.  
+  • Connection pooling for PostgreSQL.  
+- **Maintainability**:  
+  • Clean architecture with clear folder boundaries.  
+  • Consistent coding standards (ESLint, Prettier).
 
 ---
-
 ## 7. Constraints & Assumptions
 
-- **No Database**: Dashboard uses only `data.json`; real database integration is deferred.
-- **Node Version**: Requires Node.js >= 14.
-- **Next.js Version**: Built on Next.js 13+ App Router.
-- **Authentication**: Assumes availability of bcrypt or NextAuth.js at implementation time.
-- **Hosting**: Targets serverless or Node.js-capable hosting (e.g., Vercel, Netlify).
-- **Browser Support**: Modern evergreen browsers; no IE11 support required.
+- **Next.js 15** is available and stable.  
+- **Supabase** account is provisioned for auth and database hosting.  
+- **Better Auth** library supports session storage in Supabase.  
+- **Docker** installed on developer machines.  
+- Users have reliable internet connectivity.  
+- Future phases will introduce the optimization engine and detailed schemas.
 
 ---
-
 ## 8. Known Issues & Potential Pitfalls
 
-- **Static Data Limitation**: `data.json` is only for demo. A real API or database will be needed to avoid stale data.
-  *Mitigation*: Define a clear interface for data fetching so swapping to a live endpoint is trivial.
+1. **API Rate Limits**: Supabase free tier limits could throttle early testing.  
+   _Mitigation_: Use local Postgres for heavy dev, monitor usage, upgrade tier if needed.  
+2. **Database Migrations**: Schema changes without migration tooling can cause drift.  
+   _Mitigation_: Integrate Drizzle Kit early and define versioned migrations.  
+3. **Optimization Engine Complexity**: Linear programming libraries in JS may not scale.  
+   _Mitigation_: Prototype with small data sets, isolate in `/lib/optimizers`, consider external service if needed.  
+4. **Dark Mode Flash**: FOUC (flash of unstyled content) when toggling themes.  
+   _Mitigation_: Use `next-themes` SSR configs or inline theme script.  
+5. **Env Variable Leaks**: Misconfigured Vercel envs can expose secrets.  
+   _Mitigation_: Use `.env.local` for dev, Vercel’s secure environment settings for production.
 
-- **Global CSS Conflicts**: Using global styles can lead to unintended overrides.
-  *Mitigation*: Plan to migrate to CSS Modules or utility-first CSS in Phase 2.
-
-- **API Route Ambiguity**: Single `/api/auth/route.ts` handling both sign-up and sign-in could get complex.
-  *Mitigation*: Clearly branch on HTTP method (`POST /register` vs. `POST /login`) or split into separate files.
-
-- **Lack of Testing**: No test suite means regressions can slip in.
-  *Mitigation*: Build a minimal Jest + React Testing Library setup in an early iteration.
-
-- **Error Handling Gaps**: Client and server must handle edge cases (network failures, malformed input).
-  *Mitigation*: Define a standard error response schema and show user-friendly messages.
 
 ---
 
-This PRD should serve as the single source of truth for the AI model or any developer generating the next set of technical documents: Tech Stack Doc, Frontend Guidelines, Backend Structure, App Flow, File Structure, and IDE Rules. It contains all functional and non-functional requirements with no ambiguity, enabling seamless downstream development.
+This PRD provides a clear, unambiguous blueprint for the AI model to generate subsequent technical documents (Tech Stack, Frontend Guidelines, Backend Structure, App Flow, File Structure, IDE Rules, etc.) without missing details or assumptions. All major modules, flows, and decisions are explicitly defined to ensure smooth progression into development and deployment phases.
