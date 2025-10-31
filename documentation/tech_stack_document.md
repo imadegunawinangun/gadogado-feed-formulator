@@ -1,90 +1,119 @@
-# Tech Stack Document
+# Tech Stack Document for gadogado-feed-formulator
 
-This document explains the key technologies chosen for the **codeguide-starter** project. It’s written in everyday language so anyone—technical or not—can understand why each tool was picked and how it supports the application.
+This document explains, in clear everyday language, the technology choices behind the `gadogado-feed-formulator` project. It shows how each piece fits together to create a modern, reliable, and user-friendly application for animal feed formulation.
 
 ## 1. Frontend Technologies
-The frontend is everything the user sees and interacts with. For this project, we’ve used:
 
-- **Next.js (App Router)**
-  - A React framework that makes page routing, server-side rendering, and API routes very simple.
-  - Enhances user experience by pre-rendering pages on the server or at build time, leading to faster initial load.
-- **React 18**
-  - The underlying library for building user interfaces with reusable components.
-  - Provides a smooth, interactive experience thanks to its virtual DOM and modern hooks.
+Our frontend is what users see and interact with in their browsers. Here’s what we use and why:
+
+- **Next.js 15 (App Router)**
+  - A framework built on React that handles page routing, server-side rendering (SSR), and static generation. This makes pages load fast and stay up-to-date.
+  - **Turbopack**: Speeds up how quickly code changes appear during development, so our team can iterate rapidly.
+
 - **TypeScript**
-  - A superset of JavaScript that adds types (labels for data).
-  - Helps catch errors early during development and makes the code easier to maintain.
-- **CSS (globals.css & theme.css)**
-  - **globals.css** applies base styles (fonts, colors, resets) across the entire app.
-  - **dashboard/theme.css** defines the look and feel specific to the dashboard area.
-  - This separation keeps styles organized and avoids accidental style conflicts.
+  - Adds simple checks to our JavaScript code, catching mistakes early and making the UI more reliable.
 
-By combining these tools, we have a clear structure (Next.js folders for pages and layouts), safer code (TypeScript), and flexible styling with vanilla CSS.
+- **Styling Tools**:
+  - **Tailwind CSS v4**: A utility-first styling framework that lets us build consistent, responsive designs quickly without writing long CSS files.
+  - **next-themes**: Enables light and dark mode out of the box, giving users control over their viewing preference.
+
+- **UI Component Libraries**:
+  - **Shadcn UI** (New York style): Provides a set of ready-made, polished components (buttons, tables, forms) that look great together.
+  - **Radix UI primitives**: The underlying building blocks for Shadcn components, ensuring accessibility and flexibility.
+  - **Lucide React**: A library of simple, crisp icons that match our design language.
+
+These choices give us a modern, responsive, and consistent interface that works smoothly on desktops, tablets, and phones.
 
 ## 2. Backend Technologies
-The backend handles data, user accounts, and the logic behind the scenes. Our choices here are:
 
-- **Next.js API Routes**
-  - Allows us to write server-side code (`route.ts` files) alongside our frontend in the same project.
-  - Runs on Node.js, so we can handle requests like sign-up, sign-in, and data fetching in one place.
-- **Node.js Runtime**
-  - The JavaScript environment on the server that executes our API routes.
-- **bcrypt** (npm package)
-  - A library for hashing passwords securely before storing them.
-  - Ensures that even if someone got access to our data, raw passwords aren’t visible.
-- **(Optional) NextAuth.js or JWT**
-  - While this starter kit shows a custom authentication flow, it can easily integrate services like NextAuth.js for email-based login or JWT (JSON Web Tokens) for stateless sessions.
+The backend powers the core features—user accounts, data storage, and the feed formulation engine.
 
-These components work together to receive user credentials, verify or store them securely, manage sessions or tokens, and deliver protected data back to the frontend.
+- **Next.js API Routes and Server Components**
+  - Let us run code on the server for tasks like fetching data, running calculations, and protecting private pages behind authentication.
+
+- **Authentication & User Management**:
+  - **Better Auth**: A simple, secure way to handle sign-up, sign-in, password resets, and session management.
+  - **Supabase** (optional integration): A hosted service that can store user accounts and sessions, making it easy to scale and manage authentication without building it all from scratch.
+
+- **Database**:
+  - **PostgreSQL**: A reliable, open-source database for storing user profiles, ingredients, nutrients, formulations, and more.
+  - **Drizzle ORM**: A type-safe layer on top of PostgreSQL that makes database queries easier to write and reduces errors.
+  - **Drizzle Kit**: Manages database schema changes over time (migrations), so our data structure stays organized and versioned.
+
+- **Feed Formulation Logic**:
+  - **Custom Optimization Engine** (e.g., `glpk.js` or similar): Runs the mathematical calculations needed to balance ingredients and nutrients based on user inputs.
+  - Located in a dedicated `lib/` folder, following the **Repository Pattern** to separate business logic from data access.
+
+These backend tools work together to handle data securely, perform complex calculations, and serve the right information to users when they need it.
 
 ## 3. Infrastructure and Deployment
-Infrastructure covers where and how we host the app, as well as how changes get delivered:
 
-- **Git & GitHub**
-  - Version control system (Git) and remote hosting (GitHub) keep track of all code changes and allow team collaboration.
-- **Vercel (or Netlify)**
-  - A popular hosting service optimized for Next.js, with one-click deployments and global content delivery.
-  - Automatically rebuilds and deploys the site whenever code is pushed to the main branch.
-- **GitHub Actions (CI/CD)**
-  - Automates tasks like linting (ESLint), formatting (Prettier), and running any tests you add.
-  - Ensures that only clean, tested code goes live.
+How we host, build, and update the application:
 
-Together, these tools provide a reliable, scalable setup where every code change is tested and deployed quickly, with minimal manual work.
+- **Hosting Platform**:
+  - **Vercel**: Optimized for Next.js apps, offering automatic deployments, global content delivery (CDN), and serverless functions for our API routes.
+
+- **Containerization**:
+  - **Docker**: Ensures that everyone on the development team uses the same environment, reducing “it works on my machine” problems.
+
+- **Version Control & Collaboration**:
+  - **GitHub**: Hosts the code repository, tracks changes, and enables collaboration through pull requests.
+
+- **CI/CD Pipelines**:
+  - **GitHub Actions** or **Vercel’s built-in workflows**:
+    - Automatically run tests and deploy the app when code is merged into the main branch.
+    - Helps catch errors early and keeps production up to date.
+
+These choices make deployments predictable, fast, and easy to roll back if necessary, while keeping the development experience smooth.
 
 ## 4. Third-Party Integrations
-While this starter kit is minimal by design, it already includes or can easily add:
 
-- **bcrypt**
-  - For secure password hashing (included as an npm dependency).
-- **NextAuth.js** (optional)
-  - A full-featured authentication library supporting email/password, OAuth, and more.
-- **Sentry or LogRocket** (optional)
-  - For real-time error tracking and performance monitoring in production.
+We rely on a few external services to extend functionality without reinventing the wheel:
 
-These integrations help extend the app’s capabilities without building every feature from scratch.
+- **Supabase**:
+  - Optional database and authentication service fully compatible with PostgreSQL and Drizzle ORM.
+  - Offers Row-Level Security (RLS) to ensure users only see their own data.
+
+- **Linear Programming Library** (e.g., `glpk.js`):
+  - Handles the specialized math behind the feed formulation engine.
+
+- **Analytics & Monitoring** (optional):
+  - Services like **Google Analytics** or **Vercel Analytics** can be plugged in to track usage patterns and performance.
+
+- **Email/Notifications** (future):
+  - Tools like **SendGrid** or **Twilio** can be added to send password reset emails or notifications about formulation results.
+
+These integrations speed up development and bring battle-tested functionality into the project.
 
 ## 5. Security and Performance Considerations
-We’ve baked in several measures to keep users safe and the app running smoothly:
 
-Security:
-- Passwords are never stored in plain text—bcrypt hashes them with a random salt.
-- API routes can implement CSRF protection and input validation to block malicious requests.
-- Session tokens or cookies are marked secure and HttpOnly to prevent theft via JavaScript.
+We’ve built the app with safety and speed in mind:
 
-Performance:
-- Server-side rendering (SSR) and static site generation (SSG) in Next.js deliver pages faster.
-- Code splitting and lazy-loaded components ensure users only download what they need.
-- Global CSS and theme files are small and cached by the browser for quick repeat visits.
+Security Measures:
+- **Better Auth & Supabase RLS**: Protect user data with secure sessions and database policies that limit data access to the correct user.
+- **HTTPS Everywhere**: All traffic is encrypted in transit via modern TLS protocols.
+- **Environment Variables**: Secrets (API keys, database credentials) are kept out of the code and loaded securely on the server.
 
-These strategies work together to give users a fast, secure experience every time.
+Performance Optimizations:
+- **Server-Side Rendering (SSR) & Incremental Static Regeneration (ISR)** via Next.js:
+  - Critical pages load fast and stay up-to-date without full rebuilds.
+- **Turbopack** during development:
+  - Speeds up code refreshes so developers can see changes almost instantly.
+- **Caching Strategies**:
+  - Next.js built-in caching for API calls and static assets reduces load times.
+- **TypeScript & Drizzle**:
+  - Catch potential errors early, leading to fewer runtime issues that slow down the app.
+
+These measures ensure data stays safe and that users enjoy a snappy, reliable experience.
 
 ## 6. Conclusion and Overall Tech Stack Summary
-In building **codeguide-starter**, we chose technologies that:
 
-- Align with modern web standards (Next.js, React, TypeScript).
-- Provide a clear, file-based project structure for rapid onboarding.
-- Offer built-in support for server-side rendering, API routes, and static assets.
-- Emphasize security through password hashing, session management, and safe defaults.
-- Enable easy scaling and future enhancements via modular code and optional integrations.
+In summary, `gadogado-feed-formulator` combines a modern, user-friendly frontend with a robust, secure backend and a streamlined infrastructure:
 
-This stack strikes a balance between simplicity for newcomers and flexibility for experienced teams. It accelerates development of a secure authentication flow and a polished dashboard, while leaving room to plug in databases, test suites, and advanced features as the project grows.
+- **Frontend**: Next.js 15 with TypeScript, Tailwind CSS, Shadcn UI, Radix UI, Lucide React, next-themes, and Turbopack.
+- **Backend**: Next.js API Routes, Better Auth, Supabase (optional), PostgreSQL, Drizzle ORM, Drizzle Kit, and a custom optimization engine.
+- **Infrastructure**: Docker, Vercel, GitHub, and CI/CD pipelines (GitHub Actions or Vercel workflows).
+- **Integrations**: Supabase services, a linear programming library (`glpk.js`), and optional analytics or notification services.
+- **Security & Performance**: Secure authentication, database policies, SSL/TLS, SSR/ISR, caching, and type-safe code.
+
+Together, these technologies align with the goals of building a scalable, maintainable, and elegant application for farmers, nutritionists, and feed producers. The stack is both approachable for new developers and flexible enough to grow with future features and user needs.

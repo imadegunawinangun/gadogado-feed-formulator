@@ -1,14 +1,11 @@
 flowchart TD
-  Start[Landing Page]
-  SignUpPage[Sign Up Page]
-  SignInPage[Sign In Page]
-  AuthAPI[Authentication API Endpoint]
-  DashboardPage[Dashboard Page]
-  Start -->|Select Sign Up| SignUpPage
-  Start -->|Select Sign In| SignInPage
-  SignUpPage -->|Submit Credentials| AuthAPI
-  SignInPage -->|Submit Credentials| AuthAPI
-  AuthAPI -->|Success| DashboardPage
-  AuthAPI -->|Error| SignUpPage
-  AuthAPI -->|Error| SignInPage
-  DashboardPage -->|Click Logout| Start
+    A[Start] --> B{Authenticated?}
+    B -- No --> C[Show Sign In]
+    B -- Yes --> E[Show Dashboard]
+    C --> D[Authenticate]
+    D -- Success --> B
+    E --> F[Manage Ingredients]
+    E --> G[Setup Animal Profile]
+    E --> H[Run Formulation]
+    H --> I[Show Results]
+    I --> E
